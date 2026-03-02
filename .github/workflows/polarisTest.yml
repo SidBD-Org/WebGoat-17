@@ -42,5 +42,6 @@ jobs:
           polaris.application.name=WebGoat-Sid \
           polaris.project.name=jenkinsTest-17 \
           polaris.branch.name=jenkinsTest-17 \
+          polaris.portfolio.name=test \
           polaris.assessment.types=SAST \
           coverity.build.command="./mvnw clean install -DskipTests"

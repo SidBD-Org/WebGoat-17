@@ -3,7 +3,7 @@ name: Polaris Scan SAST 17
 on:
   push:
     branches:
-      - jenkinsTest-17––––
+      - jenkinsTest-17
   workflow_dispatch:
 
 jobs:

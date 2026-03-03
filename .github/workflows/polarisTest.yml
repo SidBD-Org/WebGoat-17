@@ -43,5 +43,5 @@ jobs:
           polaris.project.name=WebGoat-Sid \
           polaris.branch.name=jenkinsTest-17 \
           polaris.assessment.types=SAST,SCA \
-          polaris_test_sca_type: "SCA-SIGNATURE,SCA-PACKAGE" \
+          polaris.test.sca.type=SCA-PACKAGE,SCA-SIGNATURE \
           coverity.build.command="./mvnw clean install -DskipTests"

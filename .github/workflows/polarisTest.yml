@@ -1,4 +1,4 @@
-name: Polaris Scan SAST 17
+name: Polaris Scan 17
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
           chmod +x bridge-cli-bundle-linux64/bridge-cli
           chmod +x mvnw
           
-      - name: Run Polaris SAST
+      - name: Run Polaris 17
         env:
           POLARIS_SERVER_URL: ${{ vars.POLARIS_SERVER_URL }}
           POLARIS_ACCESS_TOKEN: ${{ secrets.POLARIS_ACCESS_TOKEN }}
@@ -42,5 +42,6 @@ jobs:
           polaris.application.name=Test \
           polaris.project.name=WebGoat-Sid \
           polaris.branch.name=jenkinsTest-17 \
-          polaris.assessment.types=SAST \
+          polaris.assessment.types=SAST,SCA \
+          polaris_test_sca_type: "SCA-SIGNATURE,SCA-PACKAGE" \
           coverity.build.command="./mvnw clean install -DskipTests"

@@ -28,17 +28,16 @@ pipeline {
 
         stage('Run Polaris SAST + SCA Scan') {
             steps {
+                withCredentials([string(credentialsId: 'prdPolarisTKN-Sid', variable: 'POLARIS_ACCESS_TOKEN')])
                 sh '''
                     echo "Running Polaris SAST + SCA"
 
                     chmod +x bridge-cli-bundle-linux64/bridge-cli
 
-                    export POLARIS_SERVER_URL=https://polaris.blackduck.com/scans/tests
+                    export POLARIS_SERVER_URL=https://polaris.blackduck.com
                     export POLARIS_ACCESS_TOKEN=$POLARIS_ACCESS_TOKEN
 
                     ./bridge-cli-bundle-linux64/bridge-cli \
-                    --server-url=$POLARIS_SERVER_URL \
-                    --access-token=$POLARIS_ACCESS_TOKEN \
                     --assessment-types=SAST,SCA \
                     --sca-scan-mode=signature,package
                 '''

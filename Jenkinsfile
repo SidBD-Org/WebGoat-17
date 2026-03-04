@@ -31,9 +31,9 @@ pipeline {
                 sh '''
                     echo "Running Polaris SAST + SCA"
 
-                    chmod +x bridge-cli-bundle-linux64/bridge
+                    chmod +x bridge-cli-bundle-linux64/bridge-cli
 
-                    ./bridge-cli-bundle-linux64/bridge \
+                    ./bridge-cli-bundle-linux64/bridge-cli \
                     --server-url=$POLARIS_SERVER_URL \
                     --access-token=$POLARIS_ACCESS_TOKEN \
                     --assessment-types=SAST,SCA \

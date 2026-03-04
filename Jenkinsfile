@@ -28,7 +28,7 @@ pipeline {
 
         stage('Run Polaris SAST + SCA Scan') {
             steps {
-                withCredentials([string(credentialsId: 'prdPolarisTKN-Sid', variable: 'POLARIS_ACCESS_TOKEN')])
+                withCredentials([string(credentialsId: 'prdPolarisTKN-Sid', variable: 'POLARIS_ACCESS_TOKEN')]) {
                     sh '''
                     echo "Running Polaris SAST + SCA"
 
@@ -38,7 +38,7 @@ pipeline {
                     export POLARIS_ACCESS_TOKEN=$POLARIS_ACCESS_TOKEN
 
                     ./bridge-cli-bundle-linux64/bridge-cli \
-                    --assessment-types=SAST,SCA \
+                    --assesment-types=SAST,SCA \
                     --sca-scan-mode=signature,package
                     '''
             }

@@ -19,9 +19,9 @@ pipeline {
                 sh '''
                     echo "Downloading Bridge CLI"
 
-                    curl -L -o bridge.zip https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/bridge-cli-bundle-linux64.zip
+                    curl -L -o bridge-cli-bundle-linux64.zip https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/bridge/binaries/bridge-cli-bundle/latest/bridge-cli-bundle-linux64.zip
 
-                    unzip -o bridge.zip
+                    unzip -o bridge-cli-bundle-linux64.zip
                 '''
             }
         }

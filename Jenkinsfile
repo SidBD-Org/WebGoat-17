@@ -33,6 +33,9 @@ pipeline {
 
                     chmod +x bridge-cli-bundle-linux64/bridge-cli
 
+                    export POLARIS_SERVER_URL=https://polaris.blackduck.com/scans/tests
+                    export POLARIS_ACCESS_TOKEN=$POLARIS_ACCESS_TOKEN
+
                     ./bridge-cli-bundle-linux64/bridge-cli \
                     --server-url=$POLARIS_SERVER_URL \
                     --access-token=$POLARIS_ACCESS_TOKEN \

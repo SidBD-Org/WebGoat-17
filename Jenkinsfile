@@ -2,8 +2,8 @@ pipeline {
   agent any
 
   tools {
-    jdk 'openjdk-17' 
-    maven 'maven-3.9.11'
+    jdk 'openjdk-17'        // adjust to your Jenkins JDK tool name if different
+    maven 'maven-3'         // adjust to your Jenkins Maven tool name if different
   }
 
   environment {
@@ -11,7 +11,7 @@ pipeline {
     POLARIS_ACCESS_TOKEN   = credentials('prdPolarisTKN-Sid')  // Jenkins Secret Text
     BRIDGE_BUNDLE_URL      = 'https://repo.blackduck.com/artifactory/bds-integrations-release/com/blackduck/integration/bridge/binaries/bridge-cli-bundle/latest/bridge-cli-bundle-linux64.zip'
 
-    // From your Polaris structure
+    // From your Polaris structure (screenshot)
     POLARIS_APPLICATION    = 'WebGoatSid-Jenkins'
     POLARIS_PROJECT        = 'WebGoatSid-Jenkins'
     POLARIS_BRANCH         = 'jenkinsTest-17'
@@ -37,16 +37,19 @@ pipeline {
           curl -fLsS -o bridge.zip "$BRIDGE_BUNDLE_URL"
           unzip -qo bridge.zip
           rm -f bridge.zip
-          chmod +x bridge-cli-bundle*/bridge
+
+          # Current bundles extract 'bridge-cli' at repo root (no nested path)
+          chmod +x bridge-cli
+          ./bridge-cli --version || true
         '''
       }
     }
 
-    stage('Polaris Jenkins SAST + SCA') {
+    stage('Polaris SAST + SCA') {
       steps {
         sh '''
           echo "Running Polaris SAST + SCA..."
-          ./bridge-cli-bundle*/bridge \
+          ./bridge-cli \
             --stage polaris \
             polaris.serverUrl="$POLARIS_SERVER_URL" \
             polaris.accessToken="$POLARIS_ACCESS_TOKEN" \

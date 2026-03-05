@@ -1,49 +1,70 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        POLARIS_SERVER_URL = "https://polaris.blackduck.com"
-        POLARIS_ACCESS_TOKEN = credentials('prdPolarisTKN-Sid')
+  tools {
+    jdk 'openjdk-17' 
+    maven 'maven-3.9.11'
+  }
+
+  environment {
+    POLARIS_SERVER_URL     = 'https://polaris.blackduck.com'
+    POLARIS_ACCESS_TOKEN   = credentials('prdPolarisTKN-Sid')  // Jenkins Secret Text
+    BRIDGE_BUNDLE_URL      = 'https://repo.blackduck.com/artifactory/bds-integrations-release/com/blackduck/integration/bridge/binaries/bridge-cli-bundle/latest/bridge-cli-bundle-linux64.zip'
+
+    // From your Polaris structure
+    POLARIS_APPLICATION    = 'WebGoatSid-Jenkins'
+    POLARIS_PROJECT        = 'WebGoatSid-Jenkins'
+    POLARIS_BRANCH         = 'jenkinsTest-17'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
     }
 
-    stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Download Bridge CLI') {
-            steps {
-                sh '''
-                    echo "Downloading Bridge CLI"
-
-                    curl -L -o bridge-cli-bundle-linux64.zip https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/bridge/binaries/bridge-cli-bundle/latest/bridge-cli-bundle-linux64.zip
-
-                    unzip -o bridge-cli-bundle-linux64.zip
-                '''
-            }
-        }
-
-        stage('Run Polaris SAST + SCA Scan') {
-            steps {
-                withCredentials([string(credentialsId: 'prdPolarisTKN-Sid', variable: 'POLARIS_ACCESS_TOKEN')]) {
-                    sh '''
-                    echo "Running Polaris SAST + SCA"
-
-                    chmod +x bridge-cli-bundle-linux64/bridge-cli
-
-                    export POLARIS_SERVER_URL=https://polaris.blackduck.com
-                    export POLARIS_ACCESS_TOKEN=$POLARIS_ACCESS_TOKEN
-
-                    ./bridge-cli-bundle-linux64/bridge-cli \
-                    --assesment-types=SAST,SCA \
-                    --sca-scan-mode=signature,package
-                    '''
-            }
-        }
-
+    stage('Build (for SAST capture)') {
+      steps {
+        sh 'mvn -B clean install -DskipTests'
+      }
     }
-}
+
+    stage('Download Bridge CLI') {
+      steps {
+        sh '''
+          echo "Downloading Bridge CLI bundle..."
+          curl -fLsS -o bridge.zip "$BRIDGE_BUNDLE_URL"
+          unzip -qo bridge.zip
+          rm -f bridge.zip
+          chmod +x bridge-cli-bundle*/bridge
+        '''
+      }
+    }
+
+    stage('Polaris Jenkins SAST + SCA') {
+      steps {
+        sh '''
+          echo "Running Polaris SAST + SCA..."
+          ./bridge-cli-bundle*/bridge \
+            --stage polaris \
+            polaris.serverUrl="$POLARIS_SERVER_URL" \
+            polaris.accessToken="$POLARIS_ACCESS_TOKEN" \
+            polaris.application.name="$POLARIS_APPLICATION" \
+            polaris.project.name="$POLARIS_PROJECT" \
+            polaris.branch.name="$POLARIS_BRANCH" \
+            polaris.assessment.types=SAST,SCA \
+            polaris.test.sca.type=SCA-SIGNATURE,SCA-PACKAGE \
+            polaris.reports.sarif.create=true
+        '''
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts allowEmptyArchive: true, artifacts: '.bridge/**'
+      cleanWs()
+    }
+  }
 }

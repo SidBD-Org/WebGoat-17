@@ -44,9 +44,9 @@ pipeline {
                     --stage polaris \
                     polaris.serverUrl=https://polaris.blackduck.com \
                     polaris.accessToken=$POLARIS_TOKEN \
-                    polaris.application.name=WebGoat-App \
-                    polaris.project.name=WebGoat-17 \
-                    polaris.branch.name=jenkins-scan \
+                    polaris.application.name=Test \
+                    polaris.project.name=WGsid-jenkinsPipeline-17 \
+                    polaris.branch.name=jenkinsPipeline-17 \
                     polaris.assessment.types=SAST,SCA \
                     polaris.test.sca.type=SCA-PACKAGE,SCA-SIGNATURE \
                     coverity.build.command="./mvnw clean install -DskipTests"

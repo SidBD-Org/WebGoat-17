@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'openjdk-17'
+    }
+
     environment {
         POLARIS_TOKEN = credentials('prdPolarisTKN-Sid')
     }
@@ -9,7 +13,10 @@ pipeline {
 
         stage('Verify Java') {
             steps {
-                sh 'java -version'
+                sh '''
+                java -version
+                echo $JAVA_HOME
+                '''
             }
         }
 

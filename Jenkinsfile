@@ -29,9 +29,10 @@ pipeline {
         stage('Download Polaris Bridge CLI') {
             steps {
                 sh '''
-                    curl -L -o bridge.zip https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/bridge/binaries/bridge-cli-bundle/latest/bridge-cli-bundle-linux64.zip
-                    unzip bridge.zip
-                    chmod +x bridge-cli-bundle-linux64/bridge-cli
+                rm -rf bridge-cli-bundle-linux64
+                curl -L -o bridge.zip https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/bridge/binaries/bridge-cli-bundle/latest/bridge-cli-bundle-linux64.zip
+                unzip -o bridge.zip
+                chmod +x bridge-cli-bundle-linux64/bridge-cli
                 '''
             }
         }
